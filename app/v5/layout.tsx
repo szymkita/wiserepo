@@ -66,6 +66,10 @@ const SPOLKA_ICONS: Record<string, string> = {
   finerto: "/finerto.png",
 };
 
+const SPOLKA_FULL_LOGOS: Record<string, string> = {
+  adwise: "/adwise-full.png",
+};
+
 /* ─── Sidebar ─── */
 function V5Sidebar() {
   const pathname = usePathname();
@@ -93,80 +97,95 @@ function V5Sidebar() {
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-[232px] flex-col border-r border-border/40 bg-background">
-      {/* Brand with company switcher — tinted with brand color */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className="flex items-center gap-2.5 px-4 h-12 border-b border-border/30 w-full transition-colors text-left"
-            style={{ backgroundColor: hexToRgba(config.color, 0.04) }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={SPOLKA_ICONS[activeSystem]}
-              alt={config.name}
-              className="h-7 w-7 object-contain shrink-0"
-            />
-            <p className="flex-1 min-w-0 text-[13px] font-semibold text-foreground truncate">
-              {config.name}
-            </p>
-            <ChevronsUpDownIcon className="size-3.5 text-muted-foreground/40 shrink-0" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-[208px]">
-          {SPOLKI_BEZ_WISEGROUP.map((id) => {
-            const s = SPOLKA_CONFIG[id];
-            const isActive = id === activeSystem;
-            return (
-              <DropdownMenuItem
-                key={id}
-                onClick={() => setActiveSystem(id)}
-                className="flex items-center gap-2.5 py-2"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+      {/* Brand + view switcher — compact */}
+      <div className="border-b border-border/30">
+        {/* Logo row */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="flex items-center gap-2.5 px-4 h-12 w-full transition-colors text-left hover:bg-foreground/[0.02]"
+              style={{ backgroundColor: hexToRgba(config.color, 0.03) }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {SPOLKA_FULL_LOGOS[activeSystem] ? (
                 <img
-                  src={SPOLKA_ICONS[id] ?? ""}
-                  alt={s.name}
-                  className="h-5 w-5 object-contain shrink-0"
+                  src={SPOLKA_FULL_LOGOS[activeSystem]}
+                  alt={config.name}
+                  className="h-5 object-contain shrink-0"
                 />
-                <div className="flex-1 min-w-0">
-                  <p className={cn("text-[13px] leading-tight truncate", isActive ? "font-semibold" : "font-medium")}>
+              ) : (
+                <>
+                  <img
+                    src={SPOLKA_ICONS[activeSystem]}
+                    alt={config.name}
+                    className="h-6 w-6 object-contain shrink-0"
+                  />
+                  <p className="flex-1 min-w-0 text-[13px] font-semibold text-foreground truncate">
+                    {config.name}
+                  </p>
+                </>
+              )}
+              <ChevronsUpDownIcon className="size-3.5 text-muted-foreground/40 shrink-0 ml-auto" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-[208px]">
+            {SPOLKI_BEZ_WISEGROUP.map((id) => {
+              const s = SPOLKA_CONFIG[id];
+              const isActive = id === activeSystem;
+              return (
+                <DropdownMenuItem
+                  key={id}
+                  onClick={() => setActiveSystem(id)}
+                  className="flex items-center gap-2.5 py-2"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={SPOLKA_ICONS[id] ?? ""}
+                    alt={s.name}
+                    className="h-5 w-5 object-contain shrink-0"
+                  />
+                  <p className={cn("flex-1 text-[13px] leading-tight truncate", isActive ? "font-semibold" : "font-medium")}>
                     {s.name}
                   </p>
-                </div>
-                {isActive && <CheckIcon className="size-3.5 text-foreground shrink-0" />}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
+                  {isActive && <CheckIcon className="size-3.5 text-foreground shrink-0" />}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-      {/* System switcher */}
-      <div className="px-3 py-2.5 border-b border-border/25">
-        <div className="flex rounded-lg bg-foreground/[0.04] p-0.5">
+        {/* View tabs — inline, compact */}
+        <div className="flex px-4 gap-1">
           <button
             onClick={() => setViewMode("moj-system")}
             className={cn(
-              "flex-1 rounded-md px-3 py-1.5 text-[11px] font-medium transition-all duration-150",
+              "relative pb-2 pt-1 text-[11px] font-medium transition-colors duration-150",
               viewMode === "moj-system"
-                ? "bg-background text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
-                : "text-muted-foreground/70 hover:text-muted-foreground"
+                ? "text-foreground"
+                : "text-muted-foreground/60 hover:text-muted-foreground"
             )}
           >
             Mój system
+            {viewMode === "moj-system" && (
+              <span className="absolute bottom-0 left-0 right-0 h-[1.5px] rounded-full" style={{ backgroundColor: config.color }} />
+            )}
           </button>
           <button
             onClick={() => { setViewMode("widok-wspolny"); router.push("/v5/widok-wspolny"); }}
             className={cn(
-              "relative flex-1 rounded-md px-3 py-1.5 text-[11px] font-medium transition-all duration-150",
+              "relative pb-2 pt-1 text-[11px] font-medium transition-colors duration-150 ml-3",
               viewMode === "widok-wspolny"
-                ? "bg-background text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
-                : "text-muted-foreground/70 hover:text-muted-foreground"
+                ? "text-foreground"
+                : "text-muted-foreground/60 hover:text-muted-foreground"
             )}
           >
-            Widok wspólny
-            <span className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-blue-500 text-[8px] font-bold text-white flex items-center justify-center">
+            Wspólny
+            <span className="ml-1 inline-flex items-center justify-center h-3.5 min-w-3.5 rounded-full bg-blue-500 text-[8px] font-bold text-white px-1 leading-none">
               2
             </span>
+            {viewMode === "widok-wspolny" && (
+              <span className="absolute bottom-0 left-0 right-0 h-[1.5px] rounded-full" style={{ backgroundColor: config.color }} />
+            )}
           </button>
         </div>
       </div>
