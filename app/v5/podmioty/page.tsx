@@ -1,15 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { getPodmiotyWithRelations } from "@/features/podmioty/model/podmioty.data-source";
 import { useActiveSystem } from "@/features/shared/context/active-system-context";
-import { STATUS_PODMIOTU_LABELS } from "@/features/podmioty/model/podmioty.types";
+import { STATUS_PODMIOTU_LABELS, type statusPodmiotu } from "@/features/podmioty/model/podmioty.types";
 import { SPOLKA_CONFIG, type SpolkaId } from "@/features/shared/model/spolki.types";
 import {
   BuildingIcon,
   ArrowUpRightIcon,
   UsersIcon,
+  SearchIcon,
+  XIcon,
 } from "lucide-react";
 
 /* ─── Status ─── */
@@ -28,39 +31,80 @@ function statusText(status: string) {
   }
 }
 
+type StatusFilter = (typeof statusPodmiotu)[number] | "all";
+
 export default function V5PodmiotyPage() {
   const { activeSystem } = useActiveSystem();
-  const config = SPOLKA_CONFIG[activeSystem];
   const allPodmioty = getPodmiotyWithRelations(activeSystem);
-  const podmioty = allPodmioty.filter((p) => p.spolka === activeSystem);
+  const allForSpolka = allPodmioty.filter((p) => p.spolka === activeSystem);
 
-  const klienciCount = podmioty.filter((p) => p.status === "klient").length;
-  const leadCount = podmioty.filter((p) => p.status === "lead").length;
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [search, setSearch] = useState("");
+
+  const podmioty = allForSpolka.filter((p) => {
+    if (statusFilter !== "all" && p.status !== statusFilter) return false;
+    if (search && !p.nazwa.toLowerCase().includes(search.toLowerCase()) && !p.nip.includes(search)) return false;
+    return true;
+  });
+
+  const klienciCount = allForSpolka.filter((p) => p.status === "klient").length;
+  const leadCount = allForSpolka.filter((p) => p.status === "lead").length;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* ── H1 ── */}
-      <div className="pb-7 border-b border-border/30">
-        <div className="flex items-end justify-between">
-          <h1 className="text-[40px] font-bold tracking-tight text-foreground leading-[1]">
-            Firmy
-          </h1>
-          <div className="flex items-center gap-10 pb-2">
-            {[
-              { label: "Wszystkie", value: podmioty.length, color: "text-foreground" },
-              { label: "Klienci", value: klienciCount, color: "text-emerald-600 dark:text-emerald-400" },
-              { label: "Leady", value: leadCount, color: "text-blue-600 dark:text-blue-400" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-right">
-                <p className={cn("text-[32px] font-semibold tracking-tight tabular-nums leading-[1]", stat.color)}>
-                  {stat.value}
-                </p>
-                <p className="mt-1.5 text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/60">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
+      <h1 className="text-[52px] font-extrabold tracking-tight text-foreground leading-[1]">
+        Firmy
+      </h1>
+
+      {/* ── Filters ── */}
+      <div className="flex items-center gap-3">
+        {/* Status tabs */}
+        <div className="flex items-center gap-1 rounded-lg border border-border/40 p-1">
+          {([
+            { key: "all" as StatusFilter, label: "Wszystkie", count: allForSpolka.length },
+            { key: "klient" as StatusFilter, label: "Klienci", count: klienciCount },
+            { key: "lead" as StatusFilter, label: "Leady", count: leadCount },
+          ]).map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setStatusFilter(tab.key)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium transition-all duration-150",
+                statusFilter === tab.key
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]"
+              )}
+            >
+              {tab.label}
+              <span className={cn(
+                "tabular-nums text-[11px]",
+                statusFilter === tab.key ? "text-background/60" : "text-muted-foreground/50"
+              )}>
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Search */}
+        <div className="relative ml-auto">
+          <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground/50" strokeWidth={1.75} />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Szukaj firm..."
+            className="h-9 w-56 rounded-lg border border-border/40 bg-transparent pl-9 pr-8 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border focus:ring-1 focus:ring-border/30 transition-colors"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+            >
+              <XIcon className="size-3.5" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -71,8 +115,16 @@ export default function V5PodmiotyPage() {
             <BuildingIcon className="size-5 text-muted-foreground/40" strokeWidth={1.5} />
           </div>
           <p className="mt-4 text-sm font-medium text-muted-foreground">
-            Brak firm
+            {search || statusFilter !== "all" ? "Brak wyników" : "Brak firm"}
           </p>
+          {(search || statusFilter !== "all") && (
+            <button
+              onClick={() => { setSearch(""); setStatusFilter("all"); }}
+              className="mt-2 text-[13px] text-muted-foreground/60 hover:text-foreground transition-colors"
+            >
+              Wyczyść filtry
+            </button>
+          )}
         </div>
       ) : (
         <div>
@@ -114,7 +166,6 @@ export default function V5PodmiotyPage() {
                       )}
                       style={{ animationDelay: `${Math.min(i * 30, 300)}ms`, animationFillMode: "forwards" }}
                     >
-                      {/* Firma — two-line: name + city */}
                       <td className="px-5 py-3">
                         <p className="text-sm font-medium text-foreground group-hover:underline decoration-foreground/20 underline-offset-2">
                           {p.nazwa}
@@ -169,6 +220,7 @@ export default function V5PodmiotyPage() {
           </div>
           <p className="mt-3 px-1 text-[11px] text-muted-foreground/40 tabular-nums">
             {podmioty.length} {podmioty.length === 1 ? "firma" : podmioty.length < 5 ? "firmy" : "firm"}
+            {statusFilter !== "all" && ` · filtr: ${statusFilter === "klient" ? "klienci" : "leady"}`}
           </p>
         </div>
       )}
