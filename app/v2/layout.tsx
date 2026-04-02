@@ -19,6 +19,7 @@ import {
   LogOutIcon,
   Sun,
   Moon,
+  BellIcon,
   type LucideIcon,
 } from "lucide-react";
 import { ActiveSystemProvider } from "@/features/shared/context/active-system-context";
@@ -26,16 +27,16 @@ import { AuthGuard } from "@/components/layout/auth-guard";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 
-/* ─── Nav config ─── */
+/* ─── Nav ─── */
 interface NavItem { href: string; label: string; icon: LucideIcon }
 
 const NAV: NavItem[] = [
-  { href: "/v2/zgloszenia", label: "Zgloszenia", icon: InboxIcon },
+  { href: "/v2/zgloszenia", label: "Zgłoszenia", icon: InboxIcon },
   { href: "/v2/podmioty", label: "Firmy", icon: BuildingIcon },
   { href: "/v2/projekty", label: "Projekty", icon: FolderIcon },
-  { href: "/v2/uslugi", label: "Uslugi", icon: PackageIcon },
+  { href: "/v2/uslugi", label: "Usługi", icon: PackageIcon },
   { href: "/v2/polecenia", label: "Polecenia", icon: ArrowRightLeftIcon },
-  { href: "/v2/zespol", label: "Zespol", icon: UserCircleIcon },
+  { href: "/v2/zespol", label: "Zespół", icon: UserCircleIcon },
 ];
 
 /* ─── V2 Sidebar ─── */
@@ -60,21 +61,24 @@ function V2Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-[220px] flex-col border-r border-border/40 bg-background">
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-[232px] flex-col bg-muted/40 dark:bg-card/60 border-r border-border/50">
       {/* Brand */}
-      <div className="flex items-center gap-2.5 px-5 pt-6 pb-8">
+      <div className="flex items-center gap-3 px-5 h-[60px] border-b border-border/30">
         <div
-          className="h-7 w-7 rounded-lg"
+          className="size-8 rounded-lg flex items-center justify-center text-white text-[11px] font-bold"
           style={{ backgroundColor: config.color }}
-        />
-        <span className="text-[13px] font-semibold tracking-tight text-foreground">
-          {config.name}
-        </span>
+        >
+          {config.shortName}
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-foreground truncate">{config.name}</p>
+          <p className="text-[11px] text-muted-foreground truncate leading-tight">{config.description}</p>
+        </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 space-y-0.5">
-        <p className="px-3 pb-2 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">
+      <nav className="flex-1 px-3 pt-4 pb-2 space-y-1">
+        <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
           Menu
         </p>
         {NAV.map((item) => {
@@ -84,18 +88,18 @@ function V2Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "group flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors duration-150",
+                "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-150",
                 isActive
-                  ? "bg-foreground/[0.05] text-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.03]"
+                  ? "bg-background text-foreground font-medium shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                  : "text-muted-foreground hover:text-foreground hover:bg-background/60"
               )}
             >
               <item.icon
                 className={cn(
-                  "size-[15px] shrink-0 transition-colors duration-150",
-                  isActive ? "text-foreground" : "text-muted-foreground/70 group-hover:text-muted-foreground"
+                  "size-4 shrink-0",
+                  isActive ? "text-foreground" : "text-muted-foreground/80 group-hover:text-foreground/70"
                 )}
-                strokeWidth={1.75}
+                strokeWidth={isActive ? 2 : 1.75}
               />
               {item.label}
             </Link>
@@ -104,36 +108,41 @@ function V2Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-3 pb-4 space-y-1">
+      <div className="px-3 pb-3 space-y-1">
         <button
           onClick={() => router.push("/v2/ustawienia")}
-          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/[0.03] transition-colors duration-150"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-background/60 transition-all duration-150"
         >
-          <SettingsIcon className="size-[15px] shrink-0 text-muted-foreground/70" strokeWidth={1.75} />
+          <SettingsIcon className="size-4 text-muted-foreground/80" strokeWidth={1.75} />
           Ustawienia
         </button>
 
-        <div className="mx-3 my-2 h-px bg-border/40" />
+        <div className="mx-2 my-1.5 h-px bg-border/40" />
 
-        <div className="flex items-center gap-2.5 px-3 py-1">
-          <div className="flex size-7 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-semibold text-muted-foreground">
+        <div className="flex items-center gap-3 px-3 py-2">
+          <div className="flex size-8 items-center justify-center rounded-full bg-foreground/[0.07] text-[11px] font-semibold text-foreground/70">
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-medium text-foreground truncate leading-tight">
+            <p className="text-sm font-medium text-foreground truncate leading-tight">
               {user ? `${user.imie} ${user.nazwisko}` : ""}
             </p>
+            <p className="text-[11px] text-muted-foreground truncate leading-tight">
+              {user?.email ?? ""}
+            </p>
           </div>
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-1">
             <button
               onClick={toggleTheme}
-              className="p-1 rounded-md text-muted-foreground/50 hover:text-foreground transition-colors"
+              className="p-1.5 rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-background/60 transition-colors"
+              title={isDark ? "Tryb jasny" : "Tryb ciemny"}
             >
               {isDark ? <Sun className="size-3.5" /> : <Moon className="size-3.5" />}
             </button>
             <button
               onClick={() => { logout(); router.push("/login"); }}
-              className="p-1 rounded-md text-muted-foreground/50 hover:text-destructive transition-colors"
+              className="p-1.5 rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-background/60 transition-colors"
+              title="Wyloguj"
             >
               <LogOutIcon className="size-3.5" />
             </button>
@@ -146,42 +155,57 @@ function V2Sidebar() {
 
 /* ─── V2 Header ─── */
 const ROUTE_LABELS: Record<string, string> = {
-  "/v2/zgloszenia": "Zgloszenia",
+  "/v2/zgloszenia": "Zgłoszenia",
   "/v2/podmioty": "Firmy",
   "/v2/projekty": "Projekty",
-  "/v2/uslugi": "Uslugi",
+  "/v2/uslugi": "Usługi",
   "/v2/polecenia": "Polecenia",
-  "/v2/zespol": "Zespol",
+  "/v2/zespol": "Zespół",
 };
 
 function V2Header() {
   const pathname = usePathname();
+  const { activeSystem } = useActiveSystem();
+  const config = SPOLKA_CONFIG[activeSystem];
   const segments = pathname.split("/").filter(Boolean);
   const base = "/" + segments.slice(0, 2).join("/");
   const label = ROUTE_LABELS[base] ?? segments[1] ?? "";
   const isDetail = segments.length > 2;
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 items-center justify-between bg-background/90 backdrop-blur-md px-8">
-      <div className="flex items-center gap-1.5 text-[13px]">
-        {isDetail && (
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border/30 bg-background/80 backdrop-blur-xl px-8">
+      {/* Left: breadcrumb */}
+      <div className="flex items-center gap-2 text-sm">
+        {isDetail ? (
           <>
-            <Link href={base} className="text-muted-foreground/60 hover:text-muted-foreground transition-colors">
+            <Link href={base} className="text-muted-foreground hover:text-foreground transition-colors">
               {label}
             </Link>
-            <span className="text-muted-foreground/30">/</span>
+            <span className="text-border">/</span>
+            <span className="font-medium text-foreground">Szczegóły</span>
           </>
+        ) : (
+          <span className="font-medium text-foreground">{label}</span>
         )}
-        <span className="font-medium text-foreground">
-          {isDetail ? "Szczegoly" : label}
-        </span>
       </div>
-      <div className="flex items-center">
-        <button className="flex items-center gap-2 rounded-lg border border-border/40 bg-foreground/[0.02] px-3 py-1.5 text-[12px] text-muted-foreground/60 hover:text-muted-foreground transition-colors w-56">
-          <SearchIcon className="size-3.5" strokeWidth={1.75} />
+
+      {/* Right */}
+      <div className="flex items-center gap-3">
+        <button className="flex items-center gap-2.5 rounded-lg border border-border/50 bg-muted/30 px-3.5 py-1.5 text-sm text-muted-foreground hover:bg-muted/50 transition-colors w-60">
+          <SearchIcon className="size-4 text-muted-foreground/60" strokeWidth={1.75} />
           <span>Szukaj...</span>
-          <kbd className="ml-auto text-[10px] font-mono text-muted-foreground/40 border border-border/40 rounded px-1 py-0.5">/</kbd>
+          <kbd className="ml-auto text-[10px] font-mono text-muted-foreground/50 bg-background border border-border/50 rounded px-1.5 py-0.5 leading-none">/</kbd>
         </button>
+        <button className="relative p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors">
+          <BellIcon className="size-4" strokeWidth={1.75} />
+        </button>
+        <div className="flex items-center gap-2 pl-2 border-l border-border/30">
+          <div
+            className="size-2 rounded-full"
+            style={{ backgroundColor: config.color }}
+          />
+          <span className="text-xs font-medium text-muted-foreground">{config.shortName}</span>
+        </div>
       </div>
     </header>
   );
@@ -194,10 +218,10 @@ export default function V2Layout({ children }: { children: React.ReactNode }) {
       <ActiveSystemProvider>
         <TooltipProvider delayDuration={0}>
           <V2Sidebar />
-          <div className="min-h-screen ml-[220px]">
+          <div className="min-h-screen ml-[232px] bg-background">
             <V2Header />
-            <main className="px-8 py-6">
-              <div className="mx-auto max-w-5xl animate-fade-in">
+            <main className="px-8 py-8 lg:px-10">
+              <div className="mx-auto max-w-[960px] animate-fade-in">
                 {children}
               </div>
             </main>
