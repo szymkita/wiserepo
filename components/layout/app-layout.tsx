@@ -20,6 +20,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const isLoginPage = pathname === "/login";
   const isDesignSystem = pathname === "/design-system";
   const isDemoPage = pathname.startsWith("/demo");
+  const isV2 = pathname.startsWith("/v2");
   const { collapsed } = useSidebarCollapsed();
 
   if (isLoginPage) {
@@ -31,7 +32,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (isDesignSystem) {
+  if (isDesignSystem || isV2) {
     return (
       <AuthGuard>
         <Suspense>{children}</Suspense>
