@@ -58,7 +58,7 @@ export default function V5PodmiotyPage() {
   return (
     <div className="space-y-6">
       {/* ── H1 ── */}
-      <h1 className="text-[44px] font-extrabold tracking-tight text-foreground leading-[1]">
+      <h1 className="text-[44px] font-bold tracking-tight text-foreground leading-[1]">
         Firmy
       </h1>
 
