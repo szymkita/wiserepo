@@ -23,6 +23,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const isV2 = pathname.startsWith("/v2");
   const isV3 = pathname.startsWith("/v3");
   const isV4 = pathname.startsWith("/v4");
+  const isV5 = pathname.startsWith("/v5");
   const { collapsed } = useSidebarCollapsed();
 
   if (isLoginPage) {
@@ -34,7 +35,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (isDesignSystem || isV2 || isV3 || isV4) {
+  if (isDesignSystem || isV2 || isV3 || isV4 || isV5) {
     return (
       <AuthGuard>
         <Suspense>{children}</Suspense>
