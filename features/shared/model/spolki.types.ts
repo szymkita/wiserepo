@@ -33,7 +33,7 @@ export const SPOLKA_CONFIG: Record<SpolkaId, SpolkaConfig> = {
     id: "adwise",
     name: "AdWise",
     shortName: "AW",
-    color: "#F59E0B",
+    color: "#795BDA",
     crm: "livespace",
     description: "Agencja marketingu B2B",
   },

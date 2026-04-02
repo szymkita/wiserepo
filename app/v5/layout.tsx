@@ -190,19 +190,13 @@ function V5Sidebar() {
                 }
               }}
               className={cn(
-                "group relative flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors duration-150",
+                "group flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors duration-150",
                 isActive
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-foreground/[0.03]"
               )}
               style={isActive ? { backgroundColor: hexToRgba(config.color, 0.08) } : undefined}
             >
-              {isActive && (
-                <span
-                  className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-[2.5px] rounded-r-full"
-                  style={{ backgroundColor: config.color }}
-                />
-              )}
               <item.icon
                 className={cn(
                   "size-[15px] shrink-0 transition-colors duration-150",
@@ -272,7 +266,7 @@ function V5Header() {
   const config = SPOLKA_CONFIG[activeSystem];
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 items-center justify-between bg-background/90 backdrop-blur-md px-10 lg:px-12">
+    <header className="sticky top-0 z-30 flex h-12 items-center justify-between border-b border-border/30 bg-background/90 backdrop-blur-md px-10 lg:px-12">
       <button className="flex items-center gap-2 rounded-lg border border-border/40 bg-foreground/[0.02] px-3 py-1.5 text-[12px] text-muted-foreground/60 hover:text-muted-foreground hover:border-border/60 transition-colors w-64">
         <SearchIcon className="size-3.5" strokeWidth={1.75} />
         <span>Szukaj...</span>
