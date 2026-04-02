@@ -71,10 +71,10 @@ function SectionHeading({ children, count, action }: { children: React.ReactNode
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/60 mb-1.5">
+      <dt className="text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground mb-1.5">
         {label}
       </dt>
-      <dd className="text-[14px] text-foreground">{children}</dd>
+      <dd className="text-sm text-foreground">{children}</dd>
     </div>
   );
 }
@@ -109,7 +109,7 @@ export default function V4PodmiotDetailPage({
         Firmy
       </Link>
 
-      {/* ── Header ── */}
+      {/* ── H1 ── */}
       <div className="pb-8 border-b border-border/25">
         <div className="flex items-start justify-between">
           <div>
@@ -118,15 +118,15 @@ export default function V4PodmiotDetailPage({
                 className="inline-block h-5 w-1 rounded-full"
                 style={{ backgroundColor: spolkaConfig?.color }}
               />
-              <span className="text-[11px] font-medium uppercase tracking-[0.1em] text-muted-foreground/50">
+              <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground/50">
                 {spolkaConfig?.name}
               </span>
               <span className="text-muted-foreground/20">/</span>
-              <span className={cn("text-[11px] font-medium uppercase tracking-[0.1em]", statusColor(podmiot.status))}>
+              <span className={cn("text-[11px] font-medium uppercase tracking-[0.12em]", statusColor(podmiot.status))}>
                 {STATUS_PODMIOTU_LABELS[podmiot.status]}
               </span>
             </div>
-            <h1 className="text-[32px] font-semibold tracking-tight text-foreground leading-none">
+            <h1 className="text-[40px] font-semibold tracking-tight text-foreground leading-[1]">
               {podmiot.nazwa}
             </h1>
             <button
@@ -134,7 +134,7 @@ export default function V4PodmiotDetailPage({
                 navigator.clipboard.writeText(podmiot.nip);
                 toast("NIP skopiowany");
               }}
-              className="group flex items-center gap-1.5 mt-3 text-[14px] text-muted-foreground hover:text-foreground transition-colors"
+              className="group flex items-center gap-1.5 mt-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <span className="font-mono tabular-nums">NIP {podmiot.nip}</span>
               <CopyIcon className="size-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -142,7 +142,7 @@ export default function V4PodmiotDetailPage({
           </div>
           <button
             onClick={() => toast("Edycja danych firmy (demo)")}
-            className="rounded-lg border border-border/40 px-4 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+            className="mt-8 rounded-lg border border-border/40 px-4 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:border-border transition-colors"
           >
             Edytuj
           </button>
@@ -174,7 +174,7 @@ export default function V4PodmiotDetailPage({
           <div className="flex items-center gap-3">
             <UsersIcon className="size-4 text-blue-500/70" strokeWidth={1.75} />
             <div>
-              <p className="text-[14px] font-medium text-blue-700 dark:text-blue-300">
+              <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
                 Wspólny klient
               </p>
               <p className="text-[13px] text-blue-600/60 dark:text-blue-400/50">
@@ -206,7 +206,7 @@ export default function V4PodmiotDetailPage({
         </SectionHeading>
 
         {osoby.length === 0 ? (
-          <p className="text-[14px] text-muted-foreground/50">Brak osób kontaktowych</p>
+          <p className="text-sm text-muted-foreground/50">Brak osób kontaktowych</p>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
             {osoby.map((o) => (
@@ -215,11 +215,11 @@ export default function V4PodmiotDetailPage({
                 className="rounded-xl border border-border/30 bg-foreground/[0.01] p-5 space-y-3 hover:border-border/50 transition-colors duration-200"
               >
                 <div>
-                  <p className="text-[14px] font-medium text-foreground">
+                  <p className="text-sm font-medium text-foreground">
                     {o.imie} {o.nazwisko}
                   </p>
                   {o.stanowisko && (
-                    <p className="text-[12px] text-muted-foreground mt-0.5">{o.stanowisko}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{o.stanowisko}</p>
                   )}
                 </div>
                 <div className="space-y-1.5">
@@ -255,22 +255,22 @@ export default function V4PodmiotDetailPage({
         <SectionHeading count={zgloszenia.length}>Zgłoszenia</SectionHeading>
 
         {zgloszenia.length === 0 ? (
-          <p className="text-[14px] text-muted-foreground/50">Brak zgłoszeń</p>
+          <p className="text-sm text-muted-foreground/50">Brak zgłoszeń</p>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-border/30">
+          <div className="overflow-hidden rounded-xl border border-border/40">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border/30">
-                  <th className="px-5 py-3 text-left text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">Data</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">Spółka</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">Handlowiec</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">Status</th>
+                <tr className="border-b border-border/40 bg-foreground/[0.015]">
+                  <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Data</th>
+                  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Spółka</th>
+                  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Handlowiec</th>
+                  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {zgloszenia.map((z) => (
-                  <tr key={z.id} className="border-b border-border/15 last:border-0 hover:bg-foreground/[0.02] transition-colors duration-100">
-                    <td className="px-5 py-3.5 text-[14px] tabular-nums text-muted-foreground">{z.data}</td>
+                  <tr key={z.id} className="border-b border-border/20 last:border-0 hover:bg-foreground/[0.02] transition-colors duration-100">
+                    <td className="px-5 py-3.5 text-sm tabular-nums text-muted-foreground">{z.data}</td>
                     <td className="px-4 py-3.5">
                       {z.spolka ? (
                         <span
@@ -281,7 +281,7 @@ export default function V4PodmiotDetailPage({
                         </span>
                       ) : "\u2014"}
                     </td>
-                    <td className="px-4 py-3.5 text-[14px] text-muted-foreground">
+                    <td className="px-4 py-3.5 text-sm text-muted-foreground">
                       {z.handlowiecId ? getPracownikFullName(z.handlowiecId) : "\u2014"}
                     </td>
                     <td className="px-4 py-3.5">
@@ -319,31 +319,31 @@ export default function V4PodmiotDetailPage({
         </SectionHeading>
 
         {projekty.length === 0 ? (
-          <p className="text-[14px] text-muted-foreground/50">
+          <p className="text-sm text-muted-foreground/50">
             {podmiot.status === "klient"
               ? "Brak projektów — dodaj projekt opisujący współpracę z klientem"
               : "Projekty można dodawać po zmianie statusu na klienta"}
           </p>
         ) : (
-          <div className="overflow-hidden rounded-xl border border-border/30">
+          <div className="overflow-hidden rounded-xl border border-border/40">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border/30">
-                  <th className="px-5 py-3 text-left text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">Nazwa</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">Charakter</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">Status</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground/50">Od</th>
+                <tr className="border-b border-border/40 bg-foreground/[0.015]">
+                  <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Nazwa</th>
+                  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Charakter</th>
+                  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Status</th>
+                  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">Od</th>
                 </tr>
               </thead>
               <tbody>
                 {projekty.map((pr) => (
-                  <tr key={pr.id} className="border-b border-border/15 last:border-0 hover:bg-foreground/[0.02] transition-colors duration-100">
+                  <tr key={pr.id} className="border-b border-border/20 last:border-0 hover:bg-foreground/[0.02] transition-colors duration-100">
                     <td className="px-5 py-3.5">
-                      <Link href={`/v4/projekty/${pr.id}`} className="text-[14px] font-medium text-foreground hover:underline decoration-foreground/20 underline-offset-2">
+                      <Link href={`/v4/projekty/${pr.id}`} className="text-sm font-medium text-foreground hover:underline decoration-foreground/20 underline-offset-2">
                         {pr.nazwa}
                       </Link>
                     </td>
-                    <td className="px-4 py-3.5 text-[14px] text-muted-foreground">
+                    <td className="px-4 py-3.5 text-sm text-muted-foreground">
                       {pr.charakter === "staly" ? "Stały" : pr.charakter === "jednorazowy" ? "Jednorazowy" : "Planowany"}
                     </td>
                     <td className="px-4 py-3.5">
@@ -351,7 +351,7 @@ export default function V4PodmiotDetailPage({
                         {pr.status === "aktywny" ? "Aktywny" : "Zakończony"}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5 text-[14px] tabular-nums text-muted-foreground">{pr.dataOd}</td>
+                    <td className="px-4 py-3.5 text-sm tabular-nums text-muted-foreground">{pr.dataOd}</td>
                   </tr>
                 ))}
               </tbody>

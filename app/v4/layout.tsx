@@ -19,6 +19,7 @@ import {
   LogOutIcon,
   Sun,
   Moon,
+  UsersIcon,
   type LucideIcon,
 } from "lucide-react";
 import { ActiveSystemProvider } from "@/features/shared/context/active-system-context";
@@ -29,7 +30,7 @@ import { Toaster } from "@/components/ui/sonner";
 /* ─── Nav config ─── */
 interface NavItem { href: string; label: string; icon: LucideIcon }
 
-const NAV: NavItem[] = [
+const NAV_OPERACYJNE: NavItem[] = [
   { href: "/v4/zgloszenia", label: "Zgłoszenia", icon: InboxIcon },
   { href: "/v4/podmioty", label: "Firmy", icon: BuildingIcon },
   { href: "/v4/projekty", label: "Projekty", icon: FolderIcon },
@@ -38,14 +39,37 @@ const NAV: NavItem[] = [
   { href: "/v4/zespol", label: "Zespół", icon: UserCircleIcon },
 ];
 
+const NAV_CRM: NavItem[] = [
+  { href: "/v4/zgloszenia", label: "Zgłoszenia", icon: InboxIcon },
+  { href: "/v4/podmioty", label: "Firmy", icon: BuildingIcon },
+  { href: "/v4/projekty", label: "Projekty", icon: FolderIcon },
+  { href: "/v4/polecenia", label: "Polecenia", icon: ArrowRightLeftIcon },
+];
+
+const NAV_WIDOK_WSPOLNY: NavItem[] = [
+  { href: "/v4/widok-wspolny", label: "Wspólni klienci", icon: UsersIcon },
+];
+
+const SPOLKA_ICONS: Record<string, string> = {
+  sellwise: "/sellwise.png",
+  adwise: "/adwise.png",
+  hirewise: "/hirewise.png",
+  letsautomate: "/letsautomate.png",
+  finerto: "/finerto.png",
+};
+
 /* ─── Sidebar ─── */
 function V4Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { activeSystem } = useActiveSystem();
+  const { activeSystem, viewMode, setViewMode } = useActiveSystem();
   const { user, logout } = useAuth();
   const config = SPOLKA_CONFIG[activeSystem];
   const initials = user ? `${user.imie[0]}${user.nazwisko[0]}` : "?";
+  const isCrmSystem = activeSystem === "finerto" || activeSystem === "letsautomate";
+  const navItems = viewMode === "widok-wspolny"
+    ? NAV_WIDOK_WSPOLNY
+    : isCrmSystem ? NAV_CRM : NAV_OPERACYJNE;
 
   const [isDark, setIsDark] = useState(false);
   useEffect(() => {
@@ -60,29 +84,69 @@ function V4Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-[220px] flex-col border-r border-border/40 bg-background">
-      {/* Brand */}
-      <div className="flex items-center gap-2.5 px-5 pt-6 pb-8">
-        <div
-          className="h-7 w-7 rounded-lg"
-          style={{ backgroundColor: config.color }}
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-[232px] flex-col border-r border-border/40 bg-background">
+      {/* Brand with logo */}
+      <div className="flex items-center gap-2.5 px-4 h-14 border-b border-border/30">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={SPOLKA_ICONS[activeSystem]}
+          alt={config.name}
+          className="h-7 w-7 object-contain shrink-0"
         />
-        <span className="text-[13px] font-semibold tracking-tight text-foreground">
-          {config.name}
-        </span>
+        <div className="min-w-0">
+          <p className="text-[13px] font-semibold text-foreground leading-tight truncate">
+            {config.name}
+          </p>
+          <p className="text-[10px] text-muted-foreground/50 leading-tight truncate">
+            {config.description}
+          </p>
+        </div>
+      </div>
+
+      {/* System switcher */}
+      <div className="px-3 py-2.5 border-b border-border/25">
+        <div className="flex rounded-lg bg-foreground/[0.04] p-0.5">
+          <button
+            onClick={() => setViewMode("moj-system")}
+            className={cn(
+              "flex-1 rounded-md px-3 py-1.5 text-[11px] font-medium transition-all duration-150",
+              viewMode === "moj-system"
+                ? "bg-background text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+                : "text-muted-foreground/70 hover:text-muted-foreground"
+            )}
+          >
+            Mój system
+          </button>
+          <button
+            onClick={() => { setViewMode("widok-wspolny"); router.push("/v4/widok-wspolny"); }}
+            className={cn(
+              "relative flex-1 rounded-md px-3 py-1.5 text-[11px] font-medium transition-all duration-150",
+              viewMode === "widok-wspolny"
+                ? "bg-background text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.05)]"
+                : "text-muted-foreground/70 hover:text-muted-foreground"
+            )}
+          >
+            Widok wspólny
+            <span className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-blue-500 text-[8px] font-bold text-white flex items-center justify-center">
+              2
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 space-y-0.5">
-        <p className="px-3 pb-2 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/60">
-          Menu
-        </p>
-        {NAV.map((item) => {
+      <nav className="flex-1 px-3 pt-3 pb-2 space-y-0.5">
+        {navItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => {
+                if (viewMode === "widok-wspolny" && !item.href.includes("widok-wspolny")) {
+                  setViewMode("moj-system");
+                }
+              }}
               className={cn(
                 "group relative flex items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium transition-colors duration-150",
                 isActive
@@ -116,7 +180,7 @@ function V4Sidebar() {
           Ustawienia
         </button>
 
-        <div className="mx-3 my-2 h-px bg-border/40" />
+        <div className="mx-3 my-2 h-px bg-border/30" />
 
         <div className="flex items-center gap-2.5 px-3 py-1">
           <div className="flex size-7 items-center justify-center rounded-full bg-foreground/[0.06] text-[10px] font-semibold text-muted-foreground">
@@ -152,44 +216,27 @@ function V4Sidebar() {
   );
 }
 
-/* ─── Header ─── */
-const ROUTE_LABELS: Record<string, string> = {
-  "/v4/zgloszenia": "Zgłoszenia",
-  "/v4/podmioty": "Firmy",
-  "/v4/projekty": "Projekty",
-  "/v4/uslugi": "Usługi",
-  "/v4/polecenia": "Polecenia",
-  "/v4/zespol": "Zespół",
-};
-
+/* ─── Header (search left, no page name) ─── */
 function V4Header() {
-  const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
-  const base = "/" + segments.slice(0, 2).join("/");
-  const label = ROUTE_LABELS[base] ?? segments[1] ?? "";
-  const isDetail = segments.length > 2;
+  const { activeSystem } = useActiveSystem();
+  const config = SPOLKA_CONFIG[activeSystem];
 
   return (
-    <header className="sticky top-0 z-30 flex h-12 items-center justify-between bg-background/90 backdrop-blur-md px-8">
-      <div className="flex items-center gap-1.5 text-[13px]">
-        {isDetail && (
-          <>
-            <Link href={base} className="text-muted-foreground/60 hover:text-muted-foreground transition-colors">
-              {label}
-            </Link>
-            <span className="text-muted-foreground/30">/</span>
-          </>
-        )}
-        <span className="font-medium text-foreground">
-          {isDetail ? "Szczegóły" : label}
-        </span>
-      </div>
-      <div className="flex items-center">
-        <button className="flex items-center gap-2 rounded-lg border border-border/40 bg-foreground/[0.02] px-3 py-1.5 text-[12px] text-muted-foreground/60 hover:text-muted-foreground transition-colors w-56">
-          <SearchIcon className="size-3.5" strokeWidth={1.75} />
-          <span>Szukaj...</span>
-          <kbd className="ml-auto text-[10px] font-mono text-muted-foreground/40 border border-border/40 rounded px-1 py-0.5">/</kbd>
-        </button>
+    <header className="sticky top-0 z-30 flex h-12 items-center justify-between bg-background/90 backdrop-blur-md px-10 lg:px-12">
+      {/* Left: search */}
+      <button className="flex items-center gap-2 rounded-lg border border-border/40 bg-foreground/[0.02] px-3 py-1.5 text-[12px] text-muted-foreground/60 hover:text-muted-foreground hover:border-border/60 transition-colors w-64">
+        <SearchIcon className="size-3.5" strokeWidth={1.75} />
+        <span>Szukaj...</span>
+        <kbd className="ml-auto text-[10px] font-mono text-muted-foreground/40 border border-border/40 rounded px-1 py-0.5">/</kbd>
+      </button>
+
+      {/* Right: system indicator */}
+      <div className="flex items-center gap-2">
+        <div
+          className="size-2 rounded-full"
+          style={{ backgroundColor: config.color }}
+        />
+        <span className="text-[11px] font-medium text-muted-foreground/60">{config.name}</span>
       </div>
     </header>
   );
@@ -202,7 +249,7 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
       <ActiveSystemProvider>
         <TooltipProvider delayDuration={0}>
           <V4Sidebar />
-          <div className="min-h-screen ml-[220px]">
+          <div className="min-h-screen ml-[232px]">
             <V4Header />
             <main className="px-10 py-8 lg:px-12">
               <div className="animate-fade-in">
