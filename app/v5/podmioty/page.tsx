@@ -14,6 +14,11 @@ import {
   SearchIcon,
   XIcon,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /* ─── Status ─── */
 function statusDot(status: string) {
@@ -199,11 +204,27 @@ export default function V5PodmiotyPage() {
                       </td>
                       <td className="px-4 py-3">
                         {wks.length > 0 ? (
-                          <span className="inline-flex items-center gap-1.5">
-                            <UsersIcon className="size-3.5 text-blue-500/70" strokeWidth={1.75} />
-                            <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
-                              {wks.map((w) => SPOLKA_CONFIG[w.spolka as SpolkaId]?.shortName ?? w.spolka).join(", ")}
-                            </span>
+                          <span className="inline-flex items-center gap-1.5 flex-wrap">
+                            <UsersIcon className="size-3.5 text-blue-500/70 shrink-0" strokeWidth={1.75} />
+                            {wks.map((w, wi) => {
+                              const wkConfig = SPOLKA_CONFIG[w.spolka as SpolkaId];
+                              if (!wkConfig) return null;
+                              return (
+                                <Tooltip key={w.spolka}>
+                                  <TooltipTrigger asChild>
+                                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400 cursor-default">
+                                      {wkConfig.name}{wi < wks.length - 1 ? "," : ""}
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="bottom">
+                                    <p className="font-semibold text-xs">{wkConfig.name}</p>
+                                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                                      {w.status === "klient" ? "Klient" : w.status === "lead" ? "Lead" : w.status} · od {w.dataOd}
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              );
+                            })}
                           </span>
                         ) : null}
                       </td>
