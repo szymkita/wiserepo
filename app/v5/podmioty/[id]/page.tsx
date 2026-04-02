@@ -137,19 +137,6 @@ export default function V5PodmiotDetailPage({
                 <span className="size-2 rounded-full" style={{ backgroundColor: spolkaConfig?.color }} />
                 {spolkaConfig?.name}
               </span>
-              {wks.length > 0 && (
-                <>
-                  <span className="h-4 w-px bg-border/40" />
-                  <Link
-                    href={`/widok-wspolny/${podmiot.nip}`}
-                    className="group/cross inline-flex items-center gap-1.5 rounded-full border border-blue-200/70 dark:border-blue-800/40 bg-blue-50/50 dark:bg-blue-950/20 px-2.5 py-0.5 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-100/60 dark:hover:bg-blue-950/30 transition-colors"
-                  >
-                    <UsersIcon className="size-3" strokeWidth={2} />
-                    Wspólny z {wks.map((wk) => SPOLKA_CONFIG[wk.spolka as SpolkaId]?.shortName ?? wk.spolka).join(", ")}
-                    <ArrowUpRightIcon className="size-3 opacity-0 group-hover/cross:opacity-100 transition-opacity" />
-                  </Link>
-                </>
-              )}
             </div>
           </div>
           <button
@@ -176,6 +163,28 @@ export default function V5PodmiotDetailPage({
           )}
         </div>
       </div>
+
+      {/* ── Cross-sell callout ── */}
+      {wks.length > 0 && (
+        <Link
+          href={`/widok-wspolny/${podmiot.nip}`}
+          className="group flex items-center gap-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50/50 dark:from-blue-950/20 dark:to-indigo-950/10 border border-blue-200/50 dark:border-blue-800/30 px-5 py-4 mb-8 transition-all hover:shadow-[0_4px_12px_rgba(59,130,246,0.1)] hover:border-blue-300/60 dark:hover:border-blue-700/40 opacity-0 animate-fade-in"
+          style={{ animationDelay: "100ms", animationFillMode: "forwards" }}
+        >
+          <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/40 shrink-0">
+            <UsersIcon className="size-5 text-blue-600 dark:text-blue-400" strokeWidth={1.75} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+              Wspólny klient
+            </p>
+            <p className="text-[13px] text-blue-600/70 dark:text-blue-400/60 mt-0.5">
+              Ta firma jest również klientem: {wks.map((wk) => SPOLKA_CONFIG[wk.spolka as SpolkaId]?.name ?? wk.spolka).join(", ")}
+            </p>
+          </div>
+          <ArrowUpRightIcon className="size-4 text-blue-400 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors shrink-0" />
+        </Link>
+      )}
 
       {/* ── Two-column layout ── */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-10">

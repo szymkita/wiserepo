@@ -97,95 +97,85 @@ function V5Sidebar() {
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-[232px] flex-col border-r border-border/40 bg-background">
-      {/* Brand + view switcher — compact */}
-      <div className="border-b border-border/30">
-        {/* Logo row */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              className="flex items-center gap-2.5 px-4 h-12 w-full transition-colors text-left hover:bg-foreground/[0.02]"
-              style={{ backgroundColor: hexToRgba(config.color, 0.03) }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {SPOLKA_FULL_LOGOS[activeSystem] ? (
+      {/* Brand */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex items-center gap-2.5 px-4 h-12 border-b border-border/30 w-full transition-colors text-left hover:bg-foreground/[0.02]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {SPOLKA_FULL_LOGOS[activeSystem] ? (
+              <img
+                src={SPOLKA_FULL_LOGOS[activeSystem]}
+                alt={config.name}
+                className="h-4 object-contain shrink-0"
+              />
+            ) : (
+              <>
                 <img
-                  src={SPOLKA_FULL_LOGOS[activeSystem]}
+                  src={SPOLKA_ICONS[activeSystem]}
                   alt={config.name}
-                  className="h-5 object-contain shrink-0"
+                  className="h-6 w-6 object-contain shrink-0"
                 />
-              ) : (
-                <>
-                  <img
-                    src={SPOLKA_ICONS[activeSystem]}
-                    alt={config.name}
-                    className="h-6 w-6 object-contain shrink-0"
-                  />
-                  <p className="flex-1 min-w-0 text-[13px] font-semibold text-foreground truncate">
-                    {config.name}
-                  </p>
-                </>
-              )}
-              <ChevronsUpDownIcon className="size-3.5 text-muted-foreground/40 shrink-0 ml-auto" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-[208px]">
-            {SPOLKI_BEZ_WISEGROUP.map((id) => {
-              const s = SPOLKA_CONFIG[id];
-              const isActive = id === activeSystem;
-              return (
-                <DropdownMenuItem
-                  key={id}
-                  onClick={() => setActiveSystem(id)}
-                  className="flex items-center gap-2.5 py-2"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={SPOLKA_ICONS[id] ?? ""}
-                    alt={s.name}
-                    className="h-5 w-5 object-contain shrink-0"
-                  />
-                  <p className={cn("flex-1 text-[13px] leading-tight truncate", isActive ? "font-semibold" : "font-medium")}>
-                    {s.name}
-                  </p>
-                  {isActive && <CheckIcon className="size-3.5 text-foreground shrink-0" />}
-                </DropdownMenuItem>
-              );
-            })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                <p className="flex-1 min-w-0 text-[13px] font-semibold text-foreground truncate">
+                  {config.name}
+                </p>
+              </>
+            )}
+            <ChevronsUpDownIcon className="size-3.5 text-muted-foreground/40 shrink-0 ml-auto" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-[208px]">
+          {SPOLKI_BEZ_WISEGROUP.map((id) => {
+            const s = SPOLKA_CONFIG[id];
+            const isActive = id === activeSystem;
+            return (
+              <DropdownMenuItem
+                key={id}
+                onClick={() => setActiveSystem(id)}
+                className="flex items-center gap-2.5 py-2"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={SPOLKA_ICONS[id] ?? ""}
+                  alt={s.name}
+                  className="h-5 w-5 object-contain shrink-0"
+                />
+                <p className={cn("flex-1 text-[13px] leading-tight truncate", isActive ? "font-semibold" : "font-medium")}>
+                  {s.name}
+                </p>
+                {isActive && <CheckIcon className="size-3.5 text-foreground shrink-0" />}
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-        {/* View tabs — inline, compact */}
-        <div className="flex px-4 gap-1">
+      {/* View switcher — symmetric segmented */}
+      <div className="px-3 py-2 border-b border-border/25">
+        <div className="flex h-8 rounded-lg bg-foreground/[0.04] p-[3px]">
           <button
             onClick={() => setViewMode("moj-system")}
             className={cn(
-              "relative pb-2 pt-1 text-[11px] font-medium transition-colors duration-150",
+              "flex-1 flex items-center justify-center rounded-md text-[11px] font-medium transition-all duration-150",
               viewMode === "moj-system"
-                ? "text-foreground"
-                : "text-muted-foreground/60 hover:text-muted-foreground"
+                ? "bg-background text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+                : "text-muted-foreground hover:text-foreground/70"
             )}
           >
             Mój system
-            {viewMode === "moj-system" && (
-              <span className="absolute bottom-0 left-0 right-0 h-[1.5px] rounded-full" style={{ backgroundColor: config.color }} />
-            )}
           </button>
           <button
             onClick={() => { setViewMode("widok-wspolny"); router.push("/v5/widok-wspolny"); }}
             className={cn(
-              "relative pb-2 pt-1 text-[11px] font-medium transition-colors duration-150 ml-3",
+              "flex-1 flex items-center justify-center rounded-md text-[11px] font-medium transition-all duration-150 relative",
               viewMode === "widok-wspolny"
-                ? "text-foreground"
-                : "text-muted-foreground/60 hover:text-muted-foreground"
+                ? "bg-background text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.06)]"
+                : "text-muted-foreground hover:text-foreground/70"
             )}
           >
             Wspólny
-            <span className="ml-1 inline-flex items-center justify-center h-3.5 min-w-3.5 rounded-full bg-blue-500 text-[8px] font-bold text-white px-1 leading-none">
+            <span className="ml-1.5 flex items-center justify-center size-4 rounded-full bg-blue-500 text-[8px] font-bold text-white leading-none">
               2
             </span>
-            {viewMode === "widok-wspolny" && (
-              <span className="absolute bottom-0 left-0 right-0 h-[1.5px] rounded-full" style={{ backgroundColor: config.color }} />
-            )}
           </button>
         </div>
       </div>
