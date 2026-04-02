@@ -75,25 +75,11 @@ function V5Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { activeSystem, viewMode, setViewMode, setActiveSystem } = useActiveSystem();
-  const { user, logout } = useAuth();
   const config = SPOLKA_CONFIG[activeSystem];
-  const initials = user ? `${user.imie[0]}${user.nazwisko[0]}` : "?";
   const isCrmSystem = activeSystem === "finerto" || activeSystem === "letsautomate";
   const navItems = viewMode === "widok-wspolny"
     ? NAV_WIDOK_WSPOLNY
     : isCrmSystem ? NAV_CRM : NAV_OPERACYJNE;
-
-  const [isDark, setIsDark] = useState(false);
-  useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"));
-  }, []);
-
-  const toggleTheme = () => {
-    const next = !isDark;
-    setIsDark(next);
-    document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("wisegroup-theme", next ? "dark" : "light");
-  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-[232px] flex-col border-r border-border/40 bg-background">
@@ -216,7 +202,7 @@ function V5Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="px-3 pb-4 space-y-1">
+      <div className="px-3 pb-4">
         <button
           onClick={() => router.push("/v5/ustawienia")}
           className="flex w-full items-center gap-2.5 rounded-lg px-3 py-[7px] text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/[0.03] transition-colors duration-150"
@@ -224,41 +210,6 @@ function V5Sidebar() {
           <SettingsIcon className="size-[15px] shrink-0 text-muted-foreground/70" strokeWidth={1.75} />
           Ustawienia
         </button>
-
-        <div className="mx-3 my-2 h-px bg-border/30" />
-
-        <div className="flex items-center gap-2.5 px-3 py-1">
-          <div
-            className="flex size-7 items-center justify-center rounded-full text-[10px] font-bold text-white"
-            style={{ backgroundColor: hexToRgba(config.color, 0.7) }}
-          >
-            {initials}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-medium text-foreground truncate leading-tight">
-              {user ? `${user.imie} ${user.nazwisko}` : ""}
-            </p>
-            <p className="text-[11px] text-muted-foreground/50 truncate leading-tight">
-              {user?.email ?? ""}
-            </p>
-          </div>
-          <div className="flex items-center gap-0.5">
-            <button
-              onClick={toggleTheme}
-              className="p-1 rounded-md text-muted-foreground/50 hover:text-foreground transition-colors"
-              title={isDark ? "Tryb jasny" : "Tryb ciemny"}
-            >
-              {isDark ? <Sun className="size-3.5" /> : <Moon className="size-3.5" />}
-            </button>
-            <button
-              onClick={() => { logout(); router.push("/login"); }}
-              className="p-1 rounded-md text-muted-foreground/50 hover:text-destructive transition-colors"
-              title="Wyloguj"
-            >
-              <LogOutIcon className="size-3.5" />
-            </button>
-          </div>
-        </div>
       </div>
     </aside>
   );
@@ -267,18 +218,70 @@ function V5Sidebar() {
 /* ─── Header ─── */
 function V5Header() {
   const { activeSystem } = useActiveSystem();
+  const { user, logout } = useAuth();
+  const router = useRouter();
   const config = SPOLKA_CONFIG[activeSystem];
+  const initials = user ? `${user.imie[0]}${user.nazwisko[0]}` : "?";
+
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  const toggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("wisegroup-theme", next ? "dark" : "light");
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-12 items-center justify-between border-b border-border/30 bg-background/90 backdrop-blur-md px-10 lg:px-12">
+      {/* Left: search */}
       <button className="flex items-center gap-2 rounded-lg border border-border/40 bg-foreground/[0.02] px-3 py-1.5 text-[12px] text-muted-foreground/60 hover:text-muted-foreground hover:border-border/60 transition-colors w-64">
         <SearchIcon className="size-3.5" strokeWidth={1.75} />
         <span>Szukaj...</span>
         <kbd className="ml-auto text-[10px] font-mono text-muted-foreground/40 border border-border/40 rounded px-1 py-0.5">/</kbd>
       </button>
+
+      {/* Right: theme + user */}
       <div className="flex items-center gap-2">
-        <div className="size-2 rounded-full" style={{ backgroundColor: config.color }} />
-        <span className="text-[11px] font-medium text-muted-foreground/60">{config.name}</span>
+        <button
+          onClick={toggleTheme}
+          className="p-1.5 rounded-md text-muted-foreground/50 hover:text-foreground hover:bg-foreground/[0.03] transition-colors"
+          title={isDark ? "Tryb jasny" : "Tryb ciemny"}
+        >
+          {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+        </button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-foreground/[0.03] transition-colors">
+              <div
+                className="flex size-7 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                style={{ backgroundColor: hexToRgba(config.color, 0.7) }}
+              >
+                {initials}
+              </div>
+              <span className="text-[13px] font-medium text-foreground hidden sm:block">
+                {user ? `${user.imie} ${user.nazwisko}` : ""}
+              </span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-medium">{user ? `${user.imie} ${user.nazwisko}` : ""}</p>
+              <p className="text-xs text-muted-foreground">{user?.email ?? ""}</p>
+            </div>
+            <DropdownMenuItem
+              onClick={() => { logout(); router.push("/login"); }}
+              className="text-destructive focus:text-destructive"
+            >
+              <LogOutIcon className="mr-2 size-4" />
+              Wyloguj
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );
