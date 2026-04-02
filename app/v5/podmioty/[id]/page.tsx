@@ -102,18 +102,26 @@ export default function V5PodmiotDetailPage({
 
   return (
     <div>
-      {/* Back */}
-      <Link
-        href="/v5/podmioty"
-        className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors mb-6"
-      >
-        <ArrowLeftIcon className="size-3.5" />
-        Firmy
-      </Link>
+      {/* Back + Edit */}
+      <div className="flex items-center justify-between mb-6">
+        <Link
+          href="/v5/podmioty"
+          className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeftIcon className="size-3.5" />
+          Firmy
+        </Link>
+        <button
+          onClick={() => toast("Edycja danych firmy (demo)")}
+          className="rounded-lg border border-border/40 px-4 py-1.5 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+        >
+          Edytuj
+        </button>
+      </div>
 
       {/* ── Header ── */}
       <div className="mb-10 opacity-0 animate-fade-in" style={{ animationDelay: "50ms", animationFillMode: "forwards" }}>
-        <div className="flex items-start justify-between mb-5">
+        <div className="mb-5">
           <div>
             <h1 className="text-[40px] font-bold tracking-tight text-foreground leading-[1]">
               {podmiot.nazwa}
@@ -167,12 +175,6 @@ export default function V5PodmiotDetailPage({
               })}
             </div>
           </div>
-          <button
-            onClick={() => toast("Edycja danych firmy (demo)")}
-            className="mt-2 rounded-lg border border-border/40 px-4 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:border-border transition-colors"
-          >
-            Edytuj
-          </button>
         </div>
 
         {/* Info chips */}
