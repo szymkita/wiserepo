@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { SPOLKA_CONFIG } from "@/features/shared/model/spolki.types";
+import { SPOLKA_CONFIG, SPOLKI_BEZ_WISEGROUP, type SpolkaOperacyjna } from "@/features/shared/model/spolki.types";
 import { useActiveSystem } from "@/features/shared/context/active-system-context";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import {
@@ -20,9 +20,17 @@ import {
   Sun,
   Moon,
   UsersIcon,
+  ChevronsUpDownIcon,
+  CheckIcon,
   type LucideIcon,
 } from "lucide-react";
 import { ActiveSystemProvider } from "@/features/shared/context/active-system-context";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { AuthGuard } from "@/components/layout/auth-guard";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
@@ -62,7 +70,7 @@ const SPOLKA_ICONS: Record<string, string> = {
 function V4Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { activeSystem, viewMode, setViewMode } = useActiveSystem();
+  const { activeSystem, viewMode, setViewMode, setActiveSystem } = useActiveSystem();
   const { user, logout } = useAuth();
   const config = SPOLKA_CONFIG[activeSystem];
   const initials = user ? `${user.imie[0]}${user.nazwisko[0]}` : "?";
@@ -85,23 +93,54 @@ function V4Sidebar() {
 
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-[232px] flex-col border-r border-border/40 bg-background">
-      {/* Brand with logo */}
-      <div className="flex items-center gap-2.5 px-4 h-14 border-b border-border/30">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={SPOLKA_ICONS[activeSystem]}
-          alt={config.name}
-          className="h-7 w-7 object-contain shrink-0"
-        />
-        <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-foreground leading-tight truncate">
-            {config.name}
-          </p>
-          <p className="text-[10px] text-muted-foreground/50 leading-tight truncate">
-            {config.description}
-          </p>
-        </div>
-      </div>
+      {/* Brand with company switcher */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex items-center gap-2.5 px-4 h-14 border-b border-border/30 w-full hover:bg-foreground/[0.02] transition-colors text-left">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={SPOLKA_ICONS[activeSystem]}
+              alt={config.name}
+              className="h-7 w-7 object-contain shrink-0"
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold text-foreground leading-tight truncate">
+                {config.name}
+              </p>
+              <p className="text-[10px] text-muted-foreground/50 leading-tight truncate">
+                {config.description}
+              </p>
+            </div>
+            <ChevronsUpDownIcon className="size-3.5 text-muted-foreground/40 shrink-0" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-[208px]">
+          {SPOLKI_BEZ_WISEGROUP.map((id) => {
+            const s = SPOLKA_CONFIG[id];
+            const isActive = id === activeSystem;
+            return (
+              <DropdownMenuItem
+                key={id}
+                onClick={() => setActiveSystem(id)}
+                className="flex items-center gap-2.5 py-2"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={SPOLKA_ICONS[id] ?? ""}
+                  alt={s.name}
+                  className="h-5 w-5 object-contain shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className={cn("text-[13px] leading-tight truncate", isActive ? "font-semibold" : "font-medium")}>
+                    {s.name}
+                  </p>
+                </div>
+                {isActive && <CheckIcon className="size-3.5 text-foreground shrink-0" />}
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {/* System switcher */}
       <div className="px-3 py-2.5 border-b border-border/25">

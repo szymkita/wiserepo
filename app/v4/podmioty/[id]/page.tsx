@@ -126,7 +126,7 @@ export default function V4PodmiotDetailPage({
                 {STATUS_PODMIOTU_LABELS[podmiot.status]}
               </span>
             </div>
-            <h1 className="text-[40px] font-semibold tracking-tight text-foreground leading-[1]">
+            <h1 className="text-[40px] font-bold tracking-tight text-foreground leading-[1]">
               {podmiot.nazwa}
             </h1>
             <button

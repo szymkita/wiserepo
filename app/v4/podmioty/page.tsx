@@ -37,14 +37,9 @@ export default function V4PodmiotyPage() {
       {/* ── H1 ── */}
       <div className="pb-7 border-b border-border/30">
         <div className="flex items-end justify-between">
-          <div>
-            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground/50 mb-3">
-              Rejestr
-            </p>
-            <h1 className="text-[40px] font-semibold tracking-tight text-foreground leading-[1]">
-              Firmy
-            </h1>
-          </div>
+          <h1 className="text-[40px] font-bold tracking-tight text-foreground leading-[1]">
+            Firmy
+          </h1>
           <div className="flex items-center gap-10 pb-2">
             {[
               { label: "Wszystkie", value: podmioty.length, color: "text-foreground" },
