@@ -97,23 +97,18 @@ function V5Sidebar() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            className="flex items-center gap-2.5 px-4 h-[60px] border-b border-border/30 w-full transition-colors text-left"
+            className="flex items-center gap-2.5 px-4 h-12 border-b border-border/30 w-full transition-colors text-left"
             style={{ backgroundColor: hexToRgba(config.color, 0.04) }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={SPOLKA_ICONS[activeSystem]}
               alt={config.name}
-              className="h-8 w-8 object-contain shrink-0"
+              className="h-7 w-7 object-contain shrink-0"
             />
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold text-foreground leading-tight truncate">
-                {config.name}
-              </p>
-              <p className="text-[10px] text-muted-foreground/50 leading-tight truncate">
-                {config.description}
-              </p>
-            </div>
+            <p className="flex-1 min-w-0 text-[13px] font-semibold text-foreground truncate">
+              {config.name}
+            </p>
             <ChevronsUpDownIcon className="size-3.5 text-muted-foreground/40 shrink-0" />
           </button>
         </DropdownMenuTrigger>
