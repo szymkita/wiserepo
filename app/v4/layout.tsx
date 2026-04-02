@@ -204,8 +204,8 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
           <V4Sidebar />
           <div className="min-h-screen ml-[220px]">
             <V4Header />
-            <main className="px-8 py-6">
-              <div className="mx-auto max-w-5xl animate-fade-in">
+            <main className="px-10 py-8 lg:px-12">
+              <div className="animate-fade-in">
                 {children}
               </div>
             </main>
